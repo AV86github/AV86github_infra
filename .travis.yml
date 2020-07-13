@@ -3,6 +3,7 @@ sudo: required
 language: bash
 env:
   - PACKER_VARIABLES: packer/variables.json.example
+    TFLINT_VERSION: v0.17.0
 before_install:
 # install all dependencies
 - sudo apt-get install unzip
