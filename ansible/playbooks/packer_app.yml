@@ -1,6 +1,6 @@
 ---
 - name: Install ruby
-  hosts: app
+  hosts: all
   become: true
   gather_facts: no
   tasks:

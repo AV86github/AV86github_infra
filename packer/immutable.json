@@ -24,12 +24,12 @@
     "provisioners": [
         {
             "type": "file",
-            "source": "files/puma.service",
+            "source": "{{ template_dir}}/files/puma.service",
             "destination": "/tmp/puma.service"
         },
         {
             "type": "shell",
-            "script": "files/deploy_reddit_app.sh",
+            "script": "{{ template_dir}}/files/deploy_reddit_app.sh",
             "execute_command": "sudo {{.Path}}"
         }
     ]

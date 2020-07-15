@@ -1,7 +1,39 @@
 dist: trusty
 sudo: required
 language: bash
+env:
+  - PACKER_VARIABLES: packer/variables.json.example
+    TFLINT_VERSION: v0.17.0
 before_install:
+# install all dependencies
+- sudo apt-get install unzip
+- curl -O https://releases.hashicorp.com/terraform/0.12.28/terraform_0.12.28_linux_amd64.zip
+- sudo unzip terraform_0.12.28_linux_amd64.zip -d /usr/local/bin
+- terraform -v
+- sudo pip install ansible ansible-lint
+- curl https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | sudo bash
+# packer validate
+- set -e
+- |
+  for cur_file in $(find packer/ -name '*.json' -not -path "packer/backup/*")
+  do
+    echo $cur_file =================
+    packer validate -var-file $PACKER_VARIABLES $cur_file
+  done
+# terraform validate
+- |
+  for terra_file in $(find  terraform/ -name 'main.tf' -not '(' -path '*/.*' -or -path '*backup*' ')' -exec dirname {} \; | uniq)
+  do
+    echo $terra_file =================
+    (cd $terra_file && terraform init -backend=false > /dev/null && echo Validating && terraform validate && echo Running linter... && tflint && echo Successfull!)
+  done
+# ansible validate
+- |
+  for ansible_playbook in $(find ansible/playbooks -name '*.yml' -or -name '*.yaml')
+  do
+    echo $ansible_playbook =================
+    ansible-lint -x 403 $ansible_playbook
+  done
 - curl https://raw.githubusercontent.com/express42/otus-homeworks/2020-02/run.sh |
   bash
 notifications:

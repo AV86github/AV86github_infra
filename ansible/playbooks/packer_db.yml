@@ -1,6 +1,6 @@
 ---
 - name: Install Mongo
-  hosts: db
+  hosts: all
   become: true
   gather_facts: no
   vars:

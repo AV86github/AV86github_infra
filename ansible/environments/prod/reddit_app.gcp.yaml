@@ -1,0 +1,23 @@
+plugin: gcp_compute
+projects:
+  - infra-273514
+#zones: # populate inventory with instances in these regions
+#  - europe-west1-b
+hostnames:                # A list of options that describe the ordering for which hostnames should be assigned. Currently supported hostnames are 'public_ip', 'private_ip', or 'name'.
+  - name
+  #- public_ip
+#keyed_groups:
+#  - key: tags['items']
+#    separator: ''
+# keyed_groups:
+#   - key: zone
+groups:
+  #app: "'reddit-app' in (tags.items | list)"
+  #app: "'app' in name"
+  app: "'-app' in (tags['items']|join(' '))"
+  db: "'-db' in (tags['items']|join(' '))"
+compose:
+  ansible_host: networkInterfaces[0].accessConfigs[0].natIP
+filters: []
+auth_kind: serviceaccount       # gcp authentication kind. with service account you should provide the service account json key file to authenticate
+service_account_file: ./keys/infra-273514-06f3f59a8814.json
