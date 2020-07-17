@@ -3,7 +3,7 @@
   apt:
     name: "{{ item }}"
     update_cache: yes
-    state: latest
+    state: present
   loop:
     - ruby-full
     - ruby-bundler
