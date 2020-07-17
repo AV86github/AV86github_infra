@@ -1,9 +1,8 @@
 ---
-- name: Install Mongo
+- name: Converge
   hosts: all
   become: true
-  gather_facts: no
   vars:
     mongo_bind_ip: 0.0.0.0
   roles:
-    - db
+    - role: db_role
