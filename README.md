@@ -210,3 +210,58 @@ testapp_port = 9292
     ```
     trytravis
     ```
+
+Лекция 13. Домашнее задание
+==========================
+
+В домашнем задании практиковались навыки локальной разработки с использованием **Vagrant**.
+1. Развернуто локальное окружение на VirtualBox.
+    ```
+    vagrant up
+    ```
+1. С использованием Provisioner в *Vagrant* файл приложение reddit задеплоено на виртуальные машины
+    ```
+    vagrant provisioner dbserver
+    ```
+1. Таски в ролях **db** и **App** разбиты на функциональные части
+1. Для настройки ngnix в локальном окружении в **Vagrant** файл добавлено определение переменной для конфигурации роли ngnix
+1. Написаны тесты на **testinfra**
+1. Автоматический запуск тестов с использованием фреймворка **molecule**
+    ```
+    molecule init scenario --scenario-name default -r db -d vagrant
+    molecule test # linter
+    molecule create # поднимаем локальное окружение
+    molecule converge # запуск роли
+    molecule verify # запуск тустов
+    ```
+1. Шаблоны *packer* переделаны на использование ansible ролей
+1. Выполнено задание со *****:
+    2. Роль DB вынесена в отдельный репозиторий, для которого настраиваем travis\gce\molecule\testinfra\slack
+    2. Генерируем ssh ключ для доступа к GCE. Добавляем его в метаданные проекта
+    2. через модуль travis шифруем данные для доступа к GCE (**-add** сразу добавляет секрет в .travis.yml, **--com** - НЕ org версия travis):
+        ```
+        travis encrypt --com GCE_SERVICE_ACCOUNT_EMAIL='Тут почта' --add
+        travis encrypt GCE_PROJECT_ID='Тут проект' --add
+        ```
+    2. Шифруем файл с ключами и сервисным аккаунтом гугл:
+        ```
+        travis encrypt-file secrets.tar --add
+        ```
+    2. Инициализируем **molecule** для GCE (сразу создается необходимоя конфигурация):
+        ```
+        molecule init scenario --scenario-name default -r db -d gce
+        ```
+    2. Правим конфигурацию **molecule** в файле **molecule.yml**:
+        * Меняем зону
+        * Меняем image на актуальный
+    2. Настраиваем уведомления в slack:
+        * Комната в slack уже настроена на получение уведомление из github.
+        * Регистрируем оповещение коммитов:
+            ```
+            /github subscribe AV86github/db_role commits:all
+            ```
+        * Для настройки уведомлени из travis добавляем в конфигурцию travis блок с нотификациями:
+            ```
+            notifications:
+              slack: Тут нам строчку выдает travis
+            ```
