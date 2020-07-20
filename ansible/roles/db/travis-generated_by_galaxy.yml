@@ -1,28 +1,20 @@
 language: python
-python:
-- '3.6'
+python: '2.7'
+sudo: false
+addons:
+  apt:
+    packages:
+    - python-pip
 install:
-- pip install ansible>=2.4 molecule==2.22 apache-libcloud
-# script:
-#- molecule --debug test
+- pip install ansible
+- ansible --version
+- printf '[defaults]\nroles_path=../' >ansible.cfg
 script:
-- molecule create
-- molecule converge
-- molecule verify
-after_script:
-- molecule --debug destroy
+- ansible-playbook tests/test.yml -i tests/inventory --syntax-check
+notifications:
+  webhooks: https://galaxy.ansible.com/api/v1/notifications/
 env:
-  matrix:
-  - GCE_CREDENTIALS_FILE="$(pwd)/credentials_gce.json"
   global:
   - secure: DTBHUs6+MDQlA4EgwX7beQBbgY/mGUfYSmjcwpIyh+eQix2KUidPa857G8STCDjktD3lMr9yZaK2RUdc0v+k0hYNYpVtWkR9KabLvtPinrd6i/++ELt9xIlywR3it4tKQsrQhOk2OOwNhb5EpvYFGFbOu0rcGdlaUNP7FH15CMVzMJPqtX8Oe5jIC0N0wDReGWQJ0EKgb+Jx1GYdXENVT3K6OBXsEE10cOrbIq/akg3J70pNG1aWzyivpGUp2wS8yL3QqyfrB0BnFZTKq5+RwMTyA1/VBXRfzs1C7mlGcfMfG8Qs3Lt5MhJaJ79KjbQipzllH6ewCzBXxoBkoGxz2I4R0RNGNYSO8plB7Ew3dAnMi/RMsBurHzDNfEYPfrZ7JqJN8JAzWilmXCYT8+adrEnf1u6f/bR4EE4A2vcKaxSF2Q7YV39yLQGCivcKpcW+HG6nxGVMxTCPzU/qtElm8o8XQiDkdl5MruVb7Gn7gDDFftJ/H0gKGlW+CszHYGoF1u/yHdIOB8+OTfpbf81u3mwIf9aGk2TlVJY7FNHGxpbCoe6ix1h6HXioSSZ1/iMeHGWnGJMbH9iOXnfv0rWXfFLxd0H3ehnwjqjGFV7nuwJLmcSiYz/fggkEIAgvcIftpeafDoJaX0uFWMRC1/bX2oqjC124PzuivV0vz/mwEWw=
   - secure: kWIbNL24pbk5ojzQgmjiOFyLW7iEBzN20L3C2ssNXLcd3Y6lGTLc1uKpQBXZCkZHuup31Chls8atkZAZ74ISooJcrYDrnoG+V/WM8oVA42DJ5eliIFKUE/Djm/PusukMDXs5ZfVpjorQYULLuwE/ZeYRyZffUdVBoKFuQCavfevQlpsdrXhpC1JdZemGlJiBwLDCmDfGtHpIf4jDjgoRszRRcg4nqxHL20WhIEwb9upiHo+LHjqfVuJoriH8NUH6DTKZKYFjTAA2bL7Y803nDrwgSLH1Exb8jHhwd4u+NCcE4YAfBVrLInW0n51WzXvcQjIQ6b2ZzkcVtJkY/QOhoxvridMi75uZrOAVKUuPxdEjUmL+SA4ZvDb3zisArwRXPp/WdaqMrUHj1PeM5WuTcH/9spX4JAO17M3YmwZKX+tqivotkAd5COpaeD22DbrJLCjdMr1kKYIXFiU+AMHEmMCol8iC3ZrHjqwQ49CbG1x1Lus/j94hfQOjGRgYXPulXweIO6JZo3Xo+NG+ouCeRKzzMBIKsKuUvrYRegjjIlUa/XXCWwzEPA+Bm7SbC8rLj3P8XkbXJuDDXJSIwyqIX9DrUhRdLuxPtXO6eArd73G8AUMiFVP7zecQxWFi63XEa/AfgApcoKjwBhYJuSSWgtpPPbJVkkjpUmdqW8ox5QI=
   - secure: YTB+uD8tKVJepEeRCx3jtWo8AtfDZN1i7nT5IvKfp8wPgbvtN+BjTqu1YSAVEcpFNf8KdcDP+aHhSc7vtIDCGORpopERT0aSGVuZABhBQanb9Vz60YF+8RpRa5H74g9rWqNs/4h6MjSEgZ5094TDaDq89Le0IHO+3Q1LeYt5yN+1uZeUNkf/HmoPeULWH6iG2u9PHhxPhWbQsCh35hmK2w0M2WJLWh9eXO5HXQ0q/oI8DZD4ZxQPNIB+UZ2ftbItKEhMuQ1ISdtGzVXmdHAdDoqmjLDYHxJsAEmMruJpYRPQIQwrN5c9uor/19z2vFx8VZJjz1S+4Tm4mt8gp8yFTWXVLcs3IKzzVJHBOdXXvgL65fNf3yCM4OKZDsUQrZwLZNvkLN+9IbhqJYbRdqiLc7FJMKsqqxzd5tRKbAbZUQHETTy4e8eRBDjTYYAfwsS555kEBnSZW07dqZyANTc7825j4Cs+B4o6/g7gEzeeSCjcz4dFqrhmcu92gpyD3v41iaYqGiyJQuJnMk3+TRQLr5KA0Jqm0PNLTl8LuqZpCDs3mK5NMWH7lqCt/FhgjYjrf1lomIsT2/QcuPg2u+rGyHal80QZb1uzX91yMj+XdGRFv8KNtuV7pY/VHpJ3DrzScyNyb/0wjeQ/ckacid5ly5PnrUVy+nbM1Eg78xaC9YU=
-before_install:
-- openssl aes-256-cbc -K $encrypted_3b9f0b9d36d1_key -iv $encrypted_3b9f0b9d36d1_iv
-  -in secrets.tar.enc -out secrets.tar -d
-- tar xvf secrets.tar
-- mv gce_travis /home/travis/.ssh/
-- chmod 0600 /home/travis/.ssh/gce_travis
-notifications:
-  slack: devops-team-otus:c0VRApICS8RPHZNqcXlkUKZF
